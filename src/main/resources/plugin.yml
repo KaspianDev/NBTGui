@@ -1,0 +1,6 @@
+name: NBTGui
+version: '${version}'
+main: com.github.kaspiandev.nbtgui.NBTGui
+api-version: '1.19'
+depend: [ NBTAPI ]
+author: KaspianDev
