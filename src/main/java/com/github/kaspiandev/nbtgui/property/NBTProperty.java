@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class NBTProperty<T> {
+public abstract class NBTProperty<T> implements Comparable<NBTProperty<?>> {
 
     protected final ReadableNBT nbtEntity;
     protected final String name;
@@ -32,7 +32,7 @@ public abstract class NBTProperty<T> {
 
     protected List<String> bakeLore() {
         List<String> lore = new ArrayList<>();
-        lore.add("&7Type: " + getNBTType().toString() + " (" + value.getClass().getSimpleName() + ")");
+        lore.add("&7Type: " + value.getClass().getSimpleName() + " (" + getNBTType().toString() + ")");
         getPrettyValue().appendTo(lore);
 
         return lore.stream()
@@ -46,6 +46,11 @@ public abstract class NBTProperty<T> {
 
     protected abstract ItemStack getDisplayItem();
 
-    protected abstract StaticGuiElement bakeElement(char slotChar);
+    public abstract StaticGuiElement bakeElement(char slotChar);
+
+    @Override
+    public int compareTo(NBTProperty<?> property) {
+        return getClass().getName().compareTo(property.getClass().getName());
+    }
 
 }

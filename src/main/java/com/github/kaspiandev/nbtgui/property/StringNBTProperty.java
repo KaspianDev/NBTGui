@@ -2,6 +2,7 @@ package com.github.kaspiandev.nbtgui.property;
 
 import com.github.kaspiandev.nbtgui.property.value.PrettyStringListValue;
 import com.github.kaspiandev.nbtgui.property.value.PrettyValue;
+import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
@@ -40,7 +41,7 @@ public class StringNBTProperty extends NBTProperty<String> {
             item.setAmount(Math.min(value.length(), 64));
         }
 
-        meta.setDisplayName("&e&l" + value.getClass().getSimpleName());
+        meta.setDisplayName(ColorUtil.string("&e&l" + value.getClass().getSimpleName()));
         meta.setLore(bakeLore());
 
         item.setItemMeta(meta);

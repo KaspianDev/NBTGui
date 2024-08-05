@@ -9,7 +9,7 @@ public class StringUtil {
 
     public static List<String> wrapString(String string, int limit) {
         int length = string.length();
-        if (length <= limit) return List.of(string);
+        if (length <= limit) return new ArrayList<>(List.of(string));
 
         List<String> lines = new ArrayList<>();
         for (int i = limit; i <= length; i += limit) {

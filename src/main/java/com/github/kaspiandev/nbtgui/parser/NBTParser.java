@@ -9,11 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NBTParser {
-    
+
+    public static final NBTParser INSTANCE = new NBTParser();
+
+    private NBTParser() {
+    }
+
     public List<NBTProperty<?>> parse(ReadableNBT readableNBT) {
         List<NBTProperty<?>> properties = new ArrayList<>();
+        System.out.println(readableNBT.getKeys().size());
         for (String key : readableNBT.getKeys()) {
             NBTType type = readableNBT.getType(key);
+            System.out.println(key + " " + type);
             NBTProperty<?> property = switch (type) {
                 case NBTTagString -> new StringNBTProperty(readableNBT, key, readableNBT.getString(key));
                 default -> null; // TODO: Handle all types, extract
