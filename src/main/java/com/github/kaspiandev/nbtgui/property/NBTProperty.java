@@ -1,5 +1,7 @@
 package com.github.kaspiandev.nbtgui.property;
 
+import com.github.kaspiandev.nbtgui.property.value.PrettyValue;
+import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
@@ -28,14 +30,17 @@ public abstract class NBTProperty<T> {
         return value;
     }
 
-    protected List<String> getLore(List<String> additionalLines) {
+    protected List<String> bakeLore() {
         List<String> lore = new ArrayList<>();
         lore.add("&7Type: " + getNBTType().toString() + " (" + value.getClass().getSimpleName() + ")");
-        lore.add("");
-        lore.addAll(additionalLines);
+        getPrettyValue().appendTo(lore);
 
-        return lore;
+        return lore.stream()
+                   .map(ColorUtil::string)
+                   .toList();
     }
+
+    protected abstract PrettyValue<T, ?> getPrettyValue();
 
     protected abstract NBTType getNBTType();
 

@@ -31,12 +31,14 @@ dependencies {
     compileOnly "de.tr7zw:item-nbt-api-plugin:2.13.1"
 
     implementation "de.themoep:inventorygui:1.6.3-SNAPSHOT"
+    implementation "de.themoep:minedown:1.7.1-SNAPSHOT"
 }
 
 shadowJar {
     archiveClassifier.set(null)
 
     relocate "de.themoep.inventorygui", "com.github.kaspiandev.nbtgui.inventorygui"
+    relocate "de.themoep.minedown", "com.github.kaspiandev.nbtgui.minedown"
 }
 
 def targetJavaVersion = 17
