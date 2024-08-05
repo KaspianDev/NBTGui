@@ -10,37 +10,83 @@ import de.themoep.inventorygui.StaticGuiElement;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ItemPropertyGui {
 
+    private static final ItemStack FILLER = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     private static final String[] MASK = new String[]{
             "xxxxxxxxx",
             "xeeeeeeex",
             "xeeeeeeex",
             "xeeeeeeex",
-            "xxxxxxxxx"
+            "xxxpxnxxa"
     };
     // TODO: Cache
     // TODO: Add buttons to create NBT properties
     private final NBTGui plugin;
-    private final InventoryGui gui;
 
-    public ItemPropertyGui(NBTGui plugin, ItemStack item) {
+    public ItemPropertyGui(NBTGui plugin) {
         this.plugin = plugin;
-        this.gui = buildGui(item);
     }
 
-    private InventoryGui buildGui(ItemStack item) {
+    private InventoryGui buildGui(ItemStack item, Player player) {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
         // TODO: Add properties as gui items, sort by type
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
         Collections.sort(properties);
 
-        gui.addElement(new StaticGuiElement('x', new ItemStack(Material.GRAY_STAINED_GLASS_PANE)));
+        int page = gui.getPageNumber(player);
+        if (page == 0) {
+            gui.addElement(new StaticGuiElement('p', FILLER));
+        } else {
+            // TODO: Configurable pagination items
+            ItemStack previousPageItem = new ItemStack(Material.ARROW);
+            ItemMeta previousPageItemMeta = previousPageItem.getItemMeta();
+            assert previousPageItemMeta != null;
+
+            previousPageItemMeta.setDisplayName(ColorUtil.string("&6&lPrevious Page"));
+            previousPageItemMeta.setLore(List.of(
+                    "",
+                    ColorUtil.string("&7Click to go to the previous page!")
+            ));
+
+            previousPageItem.setItemMeta(previousPageItemMeta);
+
+            gui.addElement(new StaticGuiElement('p', previousPageItem, (action) -> {
+                gui.setPageNumber(page - 1);
+                gui.draw(player);
+                return true;
+            }));
+        }
+
+        if (page >= gui.getPageAmount(player)) {
+            gui.addElement(new StaticGuiElement('p', FILLER));
+        } else {
+            ItemStack nextPageItem = new ItemStack(Material.ARROW);
+            ItemMeta nextPageItemMeta = nextPageItem.getItemMeta();
+            assert nextPageItemMeta != null;
+
+            nextPageItemMeta.setDisplayName(ColorUtil.string("&6&lNext Page"));
+            nextPageItemMeta.setLore(List.of(
+                    "",
+                    ColorUtil.string("&7Click to go to the next page!")
+            ));
+
+            nextPageItem.setItemMeta(nextPageItemMeta);
+
+            gui.addElement(new StaticGuiElement('n', nextPageItem, (action) -> {
+                gui.setPageNumber(page + 1);
+                gui.draw(player);
+                return true;
+            }));
+        }
+
+        gui.addElement(new StaticGuiElement('x', FILLER));
 
         GuiElementGroup group = new GuiElementGroup('e');
         properties.forEach((property) -> {
@@ -52,9 +98,9 @@ public class ItemPropertyGui {
         return gui;
     }
 
-    public void open(Player player) {
+    public void open(Player player, ItemStack item) {
         // TODO: Send message if no props
-        gui.show(player);
+        buildGui(item, player).show(player);
     }
 
 }

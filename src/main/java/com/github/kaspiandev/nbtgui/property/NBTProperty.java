@@ -4,7 +4,6 @@ import com.github.kaspiandev.nbtgui.property.value.PrettyValue;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
-import de.tr7zw.nbtapi.iface.ReadableNBT;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -12,12 +11,10 @@ import java.util.List;
 
 public abstract class NBTProperty<T> implements Comparable<NBTProperty<?>> {
 
-    protected final ReadableNBT nbtEntity;
     protected final String name;
     protected final T value;
 
-    protected NBTProperty(ReadableNBT nbtEntity, String name, T value) {
-        this.nbtEntity = nbtEntity;
+    protected NBTProperty(String name, T value) {
         this.name = name;
         this.value = value;
     }

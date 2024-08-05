@@ -33,7 +33,7 @@ public class ItemSubcommand extends SubCommand {
             return;
         }
 
-        new ItemPropertyGui(plugin, item).open(player);
+        new ItemPropertyGui(plugin).open(player, item);
     }
 
     @Override

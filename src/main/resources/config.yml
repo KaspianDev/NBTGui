@@ -1,9 +1,9 @@
 message:
-  no-perms: "&6NBTGui &8» &cYou don't have required permissions to run this command."
-  no-args: "&6NBTGui &8» &cYou have to provide arguments to run this command."
-  unknown-arg: "&6NBTGui &8» &cProvided argument does not exist."
-  no-item: "&6NBTGui &8» &cYou need to hold an item in hand to run this command."
-  cannot-read: "&6NBTGui &8» &cNo valid NBT data was found."
-  only-player: "&6NBTGui &8» &cOnly players can use this command."
+  no-perms: "&6NBTGui &7» &cYou don't have required permissions to run this command."
+  no-args: "&6NBTGui &7» &cYou have to provide arguments to run this command."
+  unknown-arg: "&6NBTGui &7» &cProvided argument does not exist."
+  no-item: "&6NBTGui &7» &cYou need to hold an item in hand to run this command."
+  cannot-read: "&6NBTGui &7» &cNo valid NBT data was found."
+  only-player: "&6NBTGui &7» &cOnly players can use this command."
 
 version: 1
