@@ -1,4 +1,4 @@
-package com.github.kaspiandev.nbtgui.reader;
+package com.github.kaspiandev.nbtgui.property.reader;
 
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
@@ -23,7 +23,7 @@ public class PropertyReader {
         TYPE_TO_PROPERTY.put(type, function);
     }
 
-    public Optional<NBTProperty<?>> read(ReadableNBT nbtEntity, String key) {
+    public static Optional<NBTProperty<?>> read(ReadableNBT nbtEntity, String key) {
         NBTType type = nbtEntity.getType(key);
         if (!TYPE_TO_PROPERTY.containsKey(type)) return Optional.empty();
 
