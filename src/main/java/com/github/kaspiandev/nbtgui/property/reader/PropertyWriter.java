@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class PropertyWriter {
 
@@ -19,6 +20,7 @@ public class PropertyWriter {
 
     public static void register(Class<?> clazz, Function function) {
         TYPE_TO_PROPERTY.put(clazz, function);
+
     }
 
     public static boolean write(ReadWriteNBT nbtEntity, NBTProperty<?> property) {
@@ -27,6 +29,10 @@ public class PropertyWriter {
             TYPE_TO_PROPERTY.get(clazz).apply(nbtEntity, property);
             return true;
         } else return false;
+    }
+
+    public static Set<Class<?>> getRegisteredTypes() {
+        return TYPE_TO_PROPERTY.keySet();
     }
 
     @FunctionalInterface

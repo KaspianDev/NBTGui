@@ -1,6 +1,7 @@
 package com.github.kaspiandev.nbtgui.command;
 
 import com.github.kaspiandev.nbtgui.NBTGui;
+import com.github.kaspiandev.nbtgui.command.subcommand.AddSubcommand;
 import com.github.kaspiandev.nbtgui.command.subcommand.ItemSubcommand;
 
 import java.util.HashMap;
@@ -20,6 +21,8 @@ public class SubCommandRegistry {
     private void load() {
         ItemSubcommand itemSubcommand = new ItemSubcommand(plugin);
         registry.put(itemSubcommand.getType().getKey(), itemSubcommand);
+        AddSubcommand addSubcommand = new AddSubcommand(plugin);
+        registry.put(addSubcommand.getType().getKey(), addSubcommand);
     }
 
     public Map<String, SubCommand> getRegistry() {

@@ -5,6 +5,7 @@ import com.github.kaspiandev.nbtgui.command.SubCommandRegistry;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +25,7 @@ public final class NBTGui extends JavaPlugin {
                     new File(getDataFolder(), "config.yml"),
                     Objects.requireNonNull(getResource("config.yml")),
                     GeneralSettings.builder().setUseDefaults(false).build(),
+                    LoaderSettings.builder().setAutoUpdate(true).build(),
                     UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build()
             );
         } catch (IOException e) {

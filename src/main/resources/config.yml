@@ -5,5 +5,7 @@ message:
   no-item: "&6NBTGui &7» &cYou need to hold an item in hand to run this command."
   cannot-read: "&6NBTGui &7» &cNo valid NBT data was found."
   only-player: "&6NBTGui &7» &cOnly players can use this command."
+  property-set: "&6NBTGui &7» &aProperty was set successfully."
+  cannot-parse: "&6NBTGui &7» &cCannot parse specified property value."
 
-version: 1
+version: 3

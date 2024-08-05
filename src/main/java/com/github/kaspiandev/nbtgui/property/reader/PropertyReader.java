@@ -9,6 +9,7 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class PropertyReader {
 
@@ -30,6 +31,10 @@ public class PropertyReader {
         if (!TYPE_TO_PROPERTY.containsKey(type)) return Optional.empty();
 
         return Optional.of(TYPE_TO_PROPERTY.get(type).apply(nbtEntity, key));
+    }
+
+    public static Set<NBTType> getRegisteredTypes() {
+        return TYPE_TO_PROPERTY.keySet();
     }
 
     @FunctionalInterface
