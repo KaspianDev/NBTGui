@@ -14,11 +14,13 @@ public class PrettyStringListValue extends PrettyValue<String, List<String>> {
     public List<String> getValue() {
         List<String> value = StringUtil.wrapString(input, 25);
         if (value.size() == 1) {
-            value.set(0, "&7Value: " + value.get(0));
+            value.set(0, "Value: " + value.get(0));
         } else {
-            value.add(0, "&7Value:"); // Render lore starting at it's own line
+            value.add(0, "Value:"); // Render lore starting at it's own line
         }
-        return value;
+        return value.stream()
+                    .map("&7"::concat)
+                    .toList();
     }
 
     @Override

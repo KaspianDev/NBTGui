@@ -1,7 +1,6 @@
 package com.github.kaspiandev.nbtgui.property;
 
 import com.github.kaspiandev.nbtgui.property.value.PrettyStringListValue;
-import com.github.kaspiandev.nbtgui.property.value.PrettyValue;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
@@ -18,7 +17,7 @@ public class StringNBTProperty extends NBTProperty<String> {
     }
 
     @Override
-    public PrettyValue<String, ?> getPrettyValue() {
+    public PrettyStringListValue getPrettyValue() {
         return new PrettyStringListValue(value);
     }
 

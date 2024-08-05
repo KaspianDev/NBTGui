@@ -8,15 +8,16 @@ import java.util.Map;
 
 public class PropertyWriter {
 
-    private static final Map<Class<?>, PropertyWrite> TYPE_TO_PROPERTY = new HashMap<>();
+    private static final Map<Class<?>, Function> TYPE_TO_PROPERTY = new HashMap<>();
 
     static {
         register(String.class, (nbtEntity, property) -> nbtEntity.setString(property.getName(), (String) property.getValue()));
+        register(Integer.class, (nbtEntity, property) -> nbtEntity.setInteger(property.getName(), (int) property.getValue()));
     }
 
     private PropertyWriter() {}
 
-    public static void register(Class<?> clazz, PropertyWrite function) {
+    public static void register(Class<?> clazz, Function function) {
         TYPE_TO_PROPERTY.put(clazz, function);
     }
 
@@ -29,7 +30,7 @@ public class PropertyWriter {
     }
 
     @FunctionalInterface
-    public interface PropertyWrite {
+    public interface Function {
 
         void apply(ReadWriteNBT nbtEntity, NBTProperty<?> property);
 

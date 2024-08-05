@@ -1,5 +1,6 @@
 package com.github.kaspiandev.nbtgui.property.reader;
 
+import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
 import de.tr7zw.nbtapi.NBTType;
@@ -11,15 +12,16 @@ import java.util.Optional;
 
 public class PropertyReader {
 
-    private static final Map<NBTType, PropertyRead> TYPE_TO_PROPERTY = new HashMap<>();
+    private static final Map<NBTType, Read> TYPE_TO_PROPERTY = new HashMap<>();
 
     static {
-        register(NBTType.NBTTagString, (nbtEntity, key) -> new StringNBTProperty(nbtEntity, key, nbtEntity.getString(key)));
+        register(NBTType.NBTTagString, (nbtEntity, key) -> new StringNBTProperty(key, nbtEntity.getString(key)));
+        register(NBTType.NBTTagInt, (nbtEntity, key) -> new IntegerNBTProperty(key, nbtEntity.getInteger(key)));
     }
 
     private PropertyReader() {}
 
-    public static void register(NBTType type, PropertyRead function) {
+    public static void register(NBTType type, Read function) {
         TYPE_TO_PROPERTY.put(type, function);
     }
 
@@ -31,7 +33,7 @@ public class PropertyReader {
     }
 
     @FunctionalInterface
-    public interface PropertyRead {
+    public interface Read {
 
         NBTProperty<?> apply(ReadableNBT nbtEntity, String key);
 
