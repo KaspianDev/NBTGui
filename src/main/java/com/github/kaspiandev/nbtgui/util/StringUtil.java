@@ -13,7 +13,7 @@ public class StringUtil {
 
         List<String> lines = new ArrayList<>();
         for (int i = limit; i <= length; i += limit) {
-            lines.add(string.substring(i - limit, i));
+            lines.add(insertWrapSymbol(string.substring(i - limit, i), lines, '-'));
         }
 
         int remainingChars = length % limit;
@@ -22,6 +22,12 @@ public class StringUtil {
         }
 
         return lines;
+    }
+
+    private static String insertWrapSymbol(String line, List<String> lines, char symbol) {
+        return (lines.size() % 2 == 0)
+                ? line + symbol
+                : line;
     }
 
 }

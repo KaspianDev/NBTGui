@@ -32,6 +32,7 @@ public abstract class NBTProperty<T> implements Comparable<NBTProperty<?>> {
 
     protected List<String> bakeLore() {
         List<String> lore = new ArrayList<>();
+        lore.add("&7Name: " + name);
         lore.add("&7Type: " + value.getClass().getSimpleName() + " (" + getNBTType().toString() + ")");
         getPrettyValue().appendTo(lore);
 

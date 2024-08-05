@@ -8,12 +8,8 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NBTParser {
+public abstract class NBTParser {
 
-    public static final NBTParser INSTANCE = new NBTParser();
-
-    private NBTParser() {
-    }
 
     public List<NBTProperty<?>> parse(ReadableNBT readableNBT) {
         List<NBTProperty<?>> properties = new ArrayList<>();

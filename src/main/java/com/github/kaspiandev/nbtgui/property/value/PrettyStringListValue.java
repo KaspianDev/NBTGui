@@ -12,7 +12,7 @@ public class PrettyStringListValue extends PrettyValue<String, List<String>> {
 
     @Override
     public List<String> getValue() {
-        List<String> value = StringUtil.wrapString(input, 20);
+        List<String> value = StringUtil.wrapString(input, 25);
         if (value.size() == 1) {
             value.set(0, "&7Value: " + value.get(0));
         } else {
