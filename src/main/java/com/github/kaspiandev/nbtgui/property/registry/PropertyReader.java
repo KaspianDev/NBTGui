@@ -1,4 +1,4 @@
-package com.github.kaspiandev.nbtgui.property.reader;
+package com.github.kaspiandev.nbtgui.property.registry;
 
 import com.github.kaspiandev.nbtgui.property.ByteNBTProperty;
 import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;

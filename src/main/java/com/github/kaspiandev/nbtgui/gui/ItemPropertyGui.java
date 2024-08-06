@@ -28,12 +28,14 @@ public class ItemPropertyGui {
     };
     // TODO: Add buttons to create NBT properties
     private final NBTGui plugin;
+    private final Player player;
 
-    public ItemPropertyGui(NBTGui plugin) {
+    public ItemPropertyGui(NBTGui plugin, Player player) {
         this.plugin = plugin;
+        this.player = player;
     }
 
-    private InventoryGui buildGui(ItemStack item, Player player) {
+    private InventoryGui buildGui(ItemStack item) {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
@@ -99,9 +101,9 @@ public class ItemPropertyGui {
         return gui;
     }
 
-    public void open(Player player, ItemStack item) {
+    public void open(ItemStack item) {
         // TODO: Send message if no props
-        buildGui(item, player).show(player);
+        buildGui(item).show(player);
     }
 
 }

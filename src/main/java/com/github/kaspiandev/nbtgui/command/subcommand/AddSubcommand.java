@@ -3,7 +3,7 @@ package com.github.kaspiandev.nbtgui.command.subcommand;
 import com.github.kaspiandev.nbtgui.NBTGui;
 import com.github.kaspiandev.nbtgui.command.SubCommand;
 import com.github.kaspiandev.nbtgui.command.SubCommands;
-import com.github.kaspiandev.nbtgui.property.reader.PropertyFactory;
+import com.github.kaspiandev.nbtgui.property.registry.PropertyFactory;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.tr7zw.nbtapi.NBT;
 import org.bukkit.command.CommandSender;

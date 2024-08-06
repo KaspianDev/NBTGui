@@ -1,7 +1,7 @@
 package com.github.kaspiandev.nbtgui.parser;
 
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
-import com.github.kaspiandev.nbtgui.property.reader.PropertyReader;
+import com.github.kaspiandev.nbtgui.property.registry.PropertyReader;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 
 import java.util.ArrayList;
