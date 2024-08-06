@@ -4,6 +4,7 @@ import com.github.kaspiandev.nbtgui.NBTGui;
 import com.github.kaspiandev.nbtgui.parser.ItemNBTParser;
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
+import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.GuiElementGroup;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
@@ -25,7 +26,6 @@ public class ItemPropertyGui {
             "xeeeeeeex",
             "xxxpxnxxa"
     };
-    // TODO: Cache
     // TODO: Add buttons to create NBT properties
     private final NBTGui plugin;
 
@@ -36,55 +36,56 @@ public class ItemPropertyGui {
     private InventoryGui buildGui(ItemStack item, Player player) {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
-        // TODO: Add properties as gui items, sort by type
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
         Collections.sort(properties);
 
-        int page = gui.getPageNumber(player);
-        if (page == 0) {
-            gui.addElement(new StaticGuiElement('p', FILLER));
-        } else {
-            // TODO: Configurable pagination items
-            ItemStack previousPageItem = new ItemStack(Material.ARROW);
-            ItemMeta previousPageItemMeta = previousPageItem.getItemMeta();
-            assert previousPageItemMeta != null;
+        gui.addElement(new DynamicGuiElement('p', () -> {
+            if (gui.getPageNumber(player) == 0) {
+                return new StaticGuiElement('p', FILLER);
+            } else {
+                ItemStack previousPageItem = new ItemStack(Material.ARROW);
+                ItemMeta previousPageItemMeta = previousPageItem.getItemMeta();
+                assert previousPageItemMeta != null;
 
-            previousPageItemMeta.setDisplayName(ColorUtil.string("&6&lPrevious Page"));
-            previousPageItemMeta.setLore(List.of(
-                    "",
-                    ColorUtil.string("&7Click to go to the previous page!")
-            ));
+                previousPageItemMeta.setDisplayName(ColorUtil.string("&6&lPrevious Page"));
+                previousPageItemMeta.setLore(List.of(
+                        "",
+                        ColorUtil.string("&7Click to go to the previous page!")
+                ));
 
-            previousPageItem.setItemMeta(previousPageItemMeta);
+                previousPageItem.setItemMeta(previousPageItemMeta);
 
-            gui.addElement(new StaticGuiElement('p', previousPageItem, (action) -> {
-                gui.setPageNumber(page - 1);
-                gui.draw(player);
-                return true;
-            }));
-        }
+                return new StaticGuiElement('p', previousPageItem, (action) -> {
+                    gui.setPageNumber(gui.getPageNumber(player) - 1);
+                    gui.draw(player, true, false);
+                    return true;
+                });
+            }
+        }));
 
-        if (page >= gui.getPageAmount(player)) {
-            gui.addElement(new StaticGuiElement('p', FILLER));
-        } else {
-            ItemStack nextPageItem = new ItemStack(Material.ARROW);
-            ItemMeta nextPageItemMeta = nextPageItem.getItemMeta();
-            assert nextPageItemMeta != null;
+        gui.addElement(new DynamicGuiElement('n', () -> {
+            if (gui.getPageNumber(player) == gui.getPageAmount(player) - 1) {
+                return new StaticGuiElement('n', FILLER);
+            } else {
+                ItemStack nextPageItem = new ItemStack(Material.ARROW);
+                ItemMeta nextPageItemMeta = nextPageItem.getItemMeta();
+                assert nextPageItemMeta != null;
 
-            nextPageItemMeta.setDisplayName(ColorUtil.string("&6&lNext Page"));
-            nextPageItemMeta.setLore(List.of(
-                    "",
-                    ColorUtil.string("&7Click to go to the next page!")
-            ));
+                nextPageItemMeta.setDisplayName(ColorUtil.string("&6&lNext Page"));
+                nextPageItemMeta.setLore(List.of(
+                        "",
+                        ColorUtil.string("&7Click to go to the next page!")
+                ));
 
-            nextPageItem.setItemMeta(nextPageItemMeta);
+                nextPageItem.setItemMeta(nextPageItemMeta);
 
-            gui.addElement(new StaticGuiElement('n', nextPageItem, (action) -> {
-                gui.setPageNumber(page + 1);
-                gui.draw(player);
-                return true;
-            }));
-        }
+                return new StaticGuiElement('n', nextPageItem, (action) -> {
+                    gui.setPageNumber(gui.getPageNumber(player) + 1);
+                    gui.draw(player, true, false);
+                    return true;
+                });
+            }
+        }));
 
         gui.addElement(new StaticGuiElement('x', FILLER));
 

@@ -4,6 +4,7 @@ import com.github.kaspiandev.nbtgui.property.value.PrettyIntegerValue;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,6 +45,11 @@ public class IntegerNBTProperty extends NBTProperty<Integer> {
     @Override
     public StaticGuiElement bakeElement(char slotChar) {
         return new StaticGuiElement(slotChar, getDisplayItem());
+    }
+
+    @Override
+    public void writeTo(ReadWriteNBT nbtEntity) {
+        nbtEntity.setInteger(name, value);
     }
 
 }

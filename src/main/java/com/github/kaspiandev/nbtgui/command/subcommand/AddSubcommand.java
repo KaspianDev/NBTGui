@@ -4,7 +4,6 @@ import com.github.kaspiandev.nbtgui.NBTGui;
 import com.github.kaspiandev.nbtgui.command.SubCommand;
 import com.github.kaspiandev.nbtgui.command.SubCommands;
 import com.github.kaspiandev.nbtgui.property.reader.PropertyFactory;
-import com.github.kaspiandev.nbtgui.property.reader.PropertyWriter;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.tr7zw.nbtapi.NBT;
 import org.bukkit.command.CommandSender;
@@ -45,9 +44,7 @@ public class AddSubcommand extends SubCommand {
         String key = args[1];
         PropertyFactory.findIndexedClass(args[2]).ifPresentOrElse((clazz) -> {
             PropertyFactory.build(key, clazz, args[3]).ifPresentOrElse((property) -> {
-                NBT.modify(item, (nbt) -> {
-                    PropertyWriter.write(nbt, property);
-                });
+                NBT.modify(item, property::writeTo);
                 sender.spigot().sendMessage(ColorUtil.component(plugin.getDocument().getString("message.property-set")));
             }, () -> sender.spigot().sendMessage(ColorUtil.component(plugin.getDocument().getString("message.cannot-parse"))));
         }, () -> sender.spigot().sendMessage(ColorUtil.component(plugin.getDocument().getString("message.no-args"))));
