@@ -1,5 +1,6 @@
 package com.github.kaspiandev.nbtgui.property.reader;
 
+import com.github.kaspiandev.nbtgui.property.ByteNBTProperty;
 import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
@@ -13,16 +14,17 @@ import java.util.Set;
 
 public class PropertyReader {
 
-    private static final Map<NBTType, Read> TYPE_TO_PROPERTY = new HashMap<>();
+    private static final Map<NBTType, Reader> TYPE_TO_PROPERTY = new HashMap<>();
 
     static {
         register(NBTType.NBTTagString, (nbtEntity, key) -> new StringNBTProperty(key, nbtEntity.getString(key)));
         register(NBTType.NBTTagInt, (nbtEntity, key) -> new IntegerNBTProperty(key, nbtEntity.getInteger(key)));
+        register(NBTType.NBTTagByte, (nbtEntity, key) -> new ByteNBTProperty(key, nbtEntity.getByte(key)));
     }
 
     private PropertyReader() {}
 
-    public static void register(NBTType type, Read function) {
+    public static void register(NBTType type, Reader function) {
         TYPE_TO_PROPERTY.put(type, function);
     }
 
@@ -30,7 +32,7 @@ public class PropertyReader {
         NBTType type = nbtEntity.getType(key);
         if (!TYPE_TO_PROPERTY.containsKey(type)) return Optional.empty();
 
-        return Optional.of(TYPE_TO_PROPERTY.get(type).apply(nbtEntity, key));
+        return Optional.of(TYPE_TO_PROPERTY.get(type).read(nbtEntity, key));
     }
 
     public static Set<NBTType> getRegisteredTypes() {
@@ -38,9 +40,9 @@ public class PropertyReader {
     }
 
     @FunctionalInterface
-    public interface Read {
+    public interface Reader {
 
-        NBTProperty<?> apply(ReadableNBT nbtEntity, String key);
+        NBTProperty<?> read(ReadableNBT nbtEntity, String key);
 
     }
 

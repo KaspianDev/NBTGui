@@ -29,11 +29,11 @@ public class IntegerNBTProperty extends NBTProperty<Integer> {
         ItemStack item = new ItemStack(Material.STICK);
 
         ItemMeta meta = item.getItemMeta();
-        assert meta != null; // Meta cannot be null for PAPER
+        assert meta != null; // Meta cannot be null for STICK
 
         item.setAmount(Math.max(1, Math.min(value, 64)));
 
-        meta.setDisplayName(ColorUtil.string("&a&l" + value.getClass().getSimpleName()));
+        meta.setDisplayName(ColorUtil.string("&d&l" + value.getClass().getSimpleName()));
         meta.setLore(bakeLore());
 
         item.setItemMeta(meta);

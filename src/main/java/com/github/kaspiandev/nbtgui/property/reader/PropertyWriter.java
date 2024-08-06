@@ -9,16 +9,17 @@ import java.util.Set;
 
 public class PropertyWriter {
 
-    private static final Map<Class<?>, Function> TYPE_TO_PROPERTY = new HashMap<>();
+    private static final Map<Class<?>, Writer> TYPE_TO_PROPERTY = new HashMap<>();
 
     static {
         register(String.class, (nbtEntity, property) -> nbtEntity.setString(property.getName(), (String) property.getValue()));
         register(Integer.class, (nbtEntity, property) -> nbtEntity.setInteger(property.getName(), (int) property.getValue()));
+        register(Byte.class, (nbtEntity, property) -> nbtEntity.setByte(property.getName(), (byte) property.getValue()));
     }
 
     private PropertyWriter() {}
 
-    public static void register(Class<?> clazz, Function function) {
+    public static void register(Class<?> clazz, Writer function) {
         TYPE_TO_PROPERTY.put(clazz, function);
 
     }
@@ -26,7 +27,7 @@ public class PropertyWriter {
     public static boolean write(ReadWriteNBT nbtEntity, NBTProperty<?> property) {
         Class<?> clazz = property.getValue().getClass();
         if (TYPE_TO_PROPERTY.containsKey(clazz)) {
-            TYPE_TO_PROPERTY.get(clazz).apply(nbtEntity, property);
+            TYPE_TO_PROPERTY.get(clazz).write(nbtEntity, property);
             return true;
         } else return false;
     }
@@ -36,9 +37,9 @@ public class PropertyWriter {
     }
 
     @FunctionalInterface
-    public interface Function {
+    public interface Writer {
 
-        void apply(ReadWriteNBT nbtEntity, NBTProperty<?> property);
+        void write(ReadWriteNBT nbtEntity, NBTProperty<?> property);
 
     }
 
