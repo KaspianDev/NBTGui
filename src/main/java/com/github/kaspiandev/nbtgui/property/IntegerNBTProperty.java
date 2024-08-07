@@ -27,12 +27,12 @@ public class IntegerNBTProperty extends NBTProperty<Integer> {
 
     @Override
     protected ItemStack getDisplayItem() {
-        ItemStack item = new ItemStack(Material.STICK);
+        ItemStack item = new ItemStack(Material.BLAZE_ROD);
 
         ItemMeta meta = item.getItemMeta();
-        assert meta != null; // Meta cannot be null for STICK
+        assert meta != null; // Meta cannot be null for BLAZE_ROD
 
-        item.setAmount(Math.max(1, Math.min(value, 64)));
+        item.setAmount(Math.max(1, Math.min(Math.abs(value), 64)));
 
         meta.setDisplayName(ColorUtil.string("&d&l" + value.getClass().getSimpleName()));
         meta.setLore(bakeLore());

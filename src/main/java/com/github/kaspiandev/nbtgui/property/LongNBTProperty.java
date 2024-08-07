@@ -1,6 +1,6 @@
 package com.github.kaspiandev.nbtgui.property;
 
-import com.github.kaspiandev.nbtgui.property.value.PrettyByteValue;
+import com.github.kaspiandev.nbtgui.property.value.PrettyLongValue;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBTType;
@@ -9,30 +9,30 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ByteNBTProperty extends NBTProperty<Byte> {
+public class LongNBTProperty extends NBTProperty<Long> {
 
-    public ByteNBTProperty(String name, byte value) {
+    public LongNBTProperty(String name, long value) {
         super(name, value);
     }
 
     @Override
-    public PrettyByteValue getPrettyValue() {
-        return new PrettyByteValue(value);
+    public PrettyLongValue getPrettyValue() {
+        return new PrettyLongValue(value);
     }
 
     @Override
     public NBTType getNBTType() {
-        return NBTType.NBTTagByte;
+        return NBTType.NBTTagLong;
     }
 
     @Override
     protected ItemStack getDisplayItem() {
-        ItemStack item = new ItemStack(Material.STONE_BUTTON);
+        ItemStack item = new ItemStack(Material.LIGHTNING_ROD);
 
         ItemMeta meta = item.getItemMeta();
-        assert meta != null; // Meta cannot be null for STONE_BUTTON
+        assert meta != null; // Meta cannot be null for LIGHTNING_ROD
 
-        item.setAmount(Math.max(1, Math.min(Math.abs(value), 64)));
+        item.setAmount((int) Math.max(1, Math.min(Math.abs(value), 64)));
 
         meta.setDisplayName(ColorUtil.string("&d&l" + value.getClass().getSimpleName()));
         meta.setLore(bakeLore());
@@ -49,7 +49,7 @@ public class ByteNBTProperty extends NBTProperty<Byte> {
 
     @Override
     public void writeTo(ReadWriteNBT nbtEntity) {
-        nbtEntity.setByte(name, value);
+        nbtEntity.setLong(name, value);
     }
 
 }

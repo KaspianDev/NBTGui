@@ -45,6 +45,15 @@ public class ItemPropertyGui {
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
         Collections.sort(properties);
 
+        GuiElementGroup group = new GuiElementGroup('e');
+        properties.forEach((property) -> {
+            group.addElement(property.bakeElement('i'));
+        });
+
+        gui.addElement(group);
+
+        gui.draw(player, true, false);
+
         gui.addElement(new DynamicGuiElement('p', () -> {
             if (gui.getPageNumber(player) == 0) {
                 return new StaticGuiElement('p', FILLER);
@@ -55,7 +64,6 @@ public class ItemPropertyGui {
 
                 previousPageItemMeta.setDisplayName(ColorUtil.string("&6&lPrevious Page"));
                 previousPageItemMeta.setLore(List.of(
-                        "",
                         ColorUtil.string("&7Click to go to the previous page!")
                 ));
 
@@ -70,7 +78,7 @@ public class ItemPropertyGui {
         }));
 
         gui.addElement(new DynamicGuiElement('n', () -> {
-            if (gui.getPageNumber(player) == gui.getPageAmount(player) - 1) {
+            if (gui.getPageNumber(player) + 1 == gui.getPageAmount(player)) {
                 return new StaticGuiElement('n', FILLER);
             } else {
                 ItemStack nextPageItem = new ItemStack(Material.ARROW);
@@ -79,7 +87,6 @@ public class ItemPropertyGui {
 
                 nextPageItemMeta.setDisplayName(ColorUtil.string("&6&lNext Page"));
                 nextPageItemMeta.setLore(List.of(
-                        "",
                         ColorUtil.string("&7Click to go to the next page!")
                 ));
 
@@ -112,13 +119,6 @@ public class ItemPropertyGui {
         }));
 
         gui.addElement(new StaticGuiElement('x', FILLER));
-
-        GuiElementGroup group = new GuiElementGroup('e');
-        properties.forEach((property) -> {
-            group.addElement(property.bakeElement('i'));
-        });
-
-        gui.addElement(group);
 
         return gui;
     }

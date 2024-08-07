@@ -1,9 +1,6 @@
 package com.github.kaspiandev.nbtgui.property.registry;
 
-import com.github.kaspiandev.nbtgui.property.ByteNBTProperty;
-import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;
-import com.github.kaspiandev.nbtgui.property.NBTProperty;
-import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
+import com.github.kaspiandev.nbtgui.property.*;
 
 import java.util.*;
 
@@ -22,25 +19,45 @@ public class PropertyFactory {
         register(Integer.class, new Factory<>(
                 IntegerNBTProperty::new,
                 (value) -> {
-                    if (value instanceof String string) {
-                        try {
-                            return Optional.of(Integer.parseInt(string));
-                        } catch (NumberFormatException ex) {
-                            return Optional.empty();
-                        }
-                    } else return Optional.empty();
+                    if (!(value instanceof String string)) return Optional.empty();
+                    try {
+                        return Optional.of(Integer.parseInt(string));
+                    } catch (NumberFormatException ex) {
+                        return Optional.empty();
+                    }
                 }
         ));
         register(Byte.class, new Factory<>(
                 ByteNBTProperty::new,
                 (value) -> {
-                    if (value instanceof String string) {
-                        try {
-                            return Optional.of(Byte.parseByte(string));
-                        } catch (NumberFormatException ex) {
-                            return Optional.empty();
-                        }
-                    } else return Optional.empty();
+                    if (!(value instanceof String string)) return Optional.empty();
+                    try {
+                        return Optional.of(Byte.parseByte(string));
+                    } catch (NumberFormatException ex) {
+                        return Optional.empty();
+                    }
+                }
+        ));
+        register(Short.class, new Factory<>(
+                ShortNBTProperty::new,
+                (value) -> {
+                    if (!(value instanceof String string)) return Optional.empty();
+                    try {
+                        return Optional.of(Short.parseShort(string));
+                    } catch (NumberFormatException ex) {
+                        return Optional.empty();
+                    }
+                }
+        ));
+        register(Long.class, new Factory<>(
+                LongNBTProperty::new,
+                (value) -> {
+                    if (!(value instanceof String string)) return Optional.empty();
+                    try {
+                        return Optional.of(Long.parseLong(string));
+                    } catch (NumberFormatException ex) {
+                        return Optional.empty();
+                    }
                 }
         ));
     }

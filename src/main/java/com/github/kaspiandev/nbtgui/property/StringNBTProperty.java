@@ -31,6 +31,7 @@ public class StringNBTProperty extends NBTProperty<String> {
 
         ItemMeta meta = item.getItemMeta();
         assert meta != null; // Meta cannot be null for PAPER
+
         if (!value.isEmpty()) item.setAmount(Math.min(value.length(), 64));
 
         meta.setDisplayName(ColorUtil.string("&b&l" + value.getClass().getSimpleName()));

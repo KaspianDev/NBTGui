@@ -1,9 +1,6 @@
 package com.github.kaspiandev.nbtgui.property.registry;
 
-import com.github.kaspiandev.nbtgui.property.ByteNBTProperty;
-import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;
-import com.github.kaspiandev.nbtgui.property.NBTProperty;
-import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
+import com.github.kaspiandev.nbtgui.property.*;
 import de.tr7zw.nbtapi.NBTType;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 
@@ -20,6 +17,8 @@ public class PropertyReader {
         register(NBTType.NBTTagString, (nbtEntity, key) -> new StringNBTProperty(key, nbtEntity.getString(key)));
         register(NBTType.NBTTagInt, (nbtEntity, key) -> new IntegerNBTProperty(key, nbtEntity.getInteger(key)));
         register(NBTType.NBTTagByte, (nbtEntity, key) -> new ByteNBTProperty(key, nbtEntity.getByte(key)));
+        register(NBTType.NBTTagShort, (nbtEntity, key) -> new ShortNBTProperty(key, nbtEntity.getShort(key)));
+        register(NBTType.NBTTagLong, (nbtEntity, key) -> new LongNBTProperty(key, nbtEntity.getLong(key)));
     }
 
     private PropertyReader() {}
