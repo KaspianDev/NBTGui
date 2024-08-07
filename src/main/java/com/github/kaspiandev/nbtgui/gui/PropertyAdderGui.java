@@ -51,7 +51,7 @@ public class PropertyAdderGui {
     private InventoryGui buildGui() {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
-        DynamicGuiElement nameElement = new DynamicGuiElement('n', () -> {
+        gui.addElement(new DynamicGuiElement('n', () -> {
             ItemStack nameItem = new ItemStack(Material.NAME_TAG);
             ItemMeta meta = nameItem.getItemMeta();
             assert meta != null;
@@ -73,11 +73,10 @@ public class PropertyAdderGui {
 
             nameItem.setItemMeta(meta);
 
-            return new StaticGuiElement('n', nameItem); // TODO: Open name input anvil gui
-        });
-        gui.addElement(nameElement);
+            return new StaticGuiElement('n', nameItem); // TODO: Open name input
+        }));
 
-        DynamicGuiElement typeElement = new DynamicGuiElement('t', () -> {
+        gui.addElement(new DynamicGuiElement('t', () -> {
             ItemStack typeItem = new ItemStack(Material.BOOK);
             ItemMeta meta = typeItem.getItemMeta();
             assert meta != null;
@@ -99,11 +98,13 @@ public class PropertyAdderGui {
 
             typeItem.setItemMeta(meta);
 
-            return new StaticGuiElement('t', typeItem); // TODO: Open type input list gui
-        });
-        gui.addElement(typeElement);
+            return new StaticGuiElement('t', typeItem, (action) -> {
+                new TypeInputGui(plugin, this).open();
+                return true;
+            }); // TODO: Open type input list gui
+        }));
 
-        DynamicGuiElement valueElement = new DynamicGuiElement('v', () -> {
+        gui.addElement(new DynamicGuiElement('v', () -> {
             ItemStack valueItem = new ItemStack(Material.OAK_SIGN);
             ItemMeta meta = valueItem.getItemMeta();
             assert meta != null;
@@ -126,20 +127,51 @@ public class PropertyAdderGui {
             valueItem.setItemMeta(meta);
 
             return new StaticGuiElement('v', valueItem); // TODO: Open value input gui
-        });
-        gui.addElement(valueElement);
+        }));
 
         gui.addElement(new StaticGuiElement('x', FILLER));
 
         return gui;
     }
 
-    private void redraw() {
+    void redraw() {
         gui.draw(player, true, false);
     }
 
     public void open() {
         gui.show(player);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public InventoryGui getGui() {
+        return gui;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
+
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
 }

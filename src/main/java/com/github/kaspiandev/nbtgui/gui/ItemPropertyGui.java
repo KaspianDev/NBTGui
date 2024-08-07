@@ -89,6 +89,11 @@ public class ItemPropertyGui {
             }
         }));
 
+        gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_DYE), (action) -> {
+            new PropertyAdderGui(plugin, player).open();
+            return true;
+        }));
+
         gui.addElement(new StaticGuiElement('x', FILLER));
 
         GuiElementGroup group = new GuiElementGroup('e');

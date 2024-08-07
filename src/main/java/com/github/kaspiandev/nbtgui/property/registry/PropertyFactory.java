@@ -5,10 +5,7 @@ import com.github.kaspiandev.nbtgui.property.IntegerNBTProperty;
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.property.StringNBTProperty;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class PropertyFactory {
 
@@ -77,6 +74,10 @@ public class PropertyFactory {
 
     public static List<String> getIndexedClassNames() {
         return CLASS_NAME_CACHE;
+    }
+
+    public static Collection<Class<?>> getIndexedClasses() {
+        return CLASS_INDEX.values();
     }
 
     public static Optional<Class<?>> findIndexedClass(String name) {
