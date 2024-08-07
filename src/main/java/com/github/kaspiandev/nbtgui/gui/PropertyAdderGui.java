@@ -7,6 +7,7 @@ import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
 import de.tr7zw.nbtapi.NBT;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -29,7 +30,7 @@ public class PropertyAdderGui {
     private static final String[] MASK = new String[]{
             "xxxxxxxxx",
             "x ntv p x",
-            "xxxxxxxxa"
+            "cxxxxxxxa"
     };
     private final ItemPropertyGui itemPropertyGui;
     private final InventoryGui gui;
@@ -47,6 +48,7 @@ public class PropertyAdderGui {
 
         gui.setCloseAction((action) -> {
             itemPropertyGui.getGui().show(itemPropertyGui.getPlayer());
+            Bukkit.getScheduler().runTaskLater(itemPropertyGui.getPlugin(), gui::destroy, 2);
             return false;
         });
 
@@ -203,7 +205,6 @@ public class PropertyAdderGui {
             }
         }));
 
-        // TODO: Add property preview
         gui.addElement(new DynamicGuiElement('p', () -> {
             if (property == null) {
                 ItemStack noPreviewItem = new ItemStack(Material.BARRIER);
@@ -224,13 +225,45 @@ public class PropertyAdderGui {
             }
         }));
 
-        gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_DYE), (action) -> {
-            gui.close(itemPropertyGui.getPlayer());
+        ItemStack cancelItem = new ItemStack(Material.RED_DYE);
+        ItemMeta cancelMeta = cancelItem.getItemMeta();
+        assert cancelMeta != null;
+
+        cancelMeta.setDisplayName(ColorUtil.string("&c&lCancel"));
+
+        List<String> cancelLore = List.of(
+                ColorUtil.string("&7Click to exit this menu!")
+        );
+        cancelMeta.setLore(cancelLore);
+
+        cancelItem.setItemMeta(cancelMeta);
+
+        gui.addElement(new StaticGuiElement('c', cancelItem, (action) -> {
+            itemPropertyGui.getGui().show(itemPropertyGui.getPlayer());
+            Bukkit.getScheduler().runTaskLater(itemPropertyGui.getPlugin(), gui::destroy, 2);
+            return true;
+        }));
+
+        ItemStack addItem = new ItemStack(Material.LIME_DYE);
+        ItemMeta addMeta = addItem.getItemMeta();
+        assert addMeta != null;
+
+        addMeta.setDisplayName(ColorUtil.string("&a&lConfirm"));
+
+        List<String> addLore = List.of(
+                ColorUtil.string("&7Click to confirm the operation!")
+        );
+        addMeta.setLore(addLore);
+
+        addItem.setItemMeta(addMeta);
+
+        gui.addElement(new StaticGuiElement('a', addItem, (action) -> {
             if (property != null) {
                 NBT.modify(itemPropertyGui.getItem(), property::writeTo);
             }
             itemPropertyGui.rebuild();
             itemPropertyGui.getGui().show(itemPropertyGui.getPlayer());
+            Bukkit.getScheduler().runTaskLater(itemPropertyGui.getPlugin(), gui::destroy, 2);
             return true;
         }));
 
@@ -265,6 +298,14 @@ public class PropertyAdderGui {
 
     public void setType(Class<?> type) {
         this.type = type;
+    }
+
+    public NBTProperty<?> getProperty() {
+        return property;
+    }
+
+    public void setProperty(NBTProperty<?> property) {
+        this.property = property;
     }
 
 }

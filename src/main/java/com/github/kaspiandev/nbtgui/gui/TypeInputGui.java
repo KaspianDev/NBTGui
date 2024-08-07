@@ -6,6 +6,7 @@ import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.GuiElementGroup;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,7 +18,7 @@ public class TypeInputGui {
     private static final String[] MASK = new String[]{
             "xxxxxxxxx",
             "xtttttttx",
-            "xxxxxxxxx"
+            "cxxxxxxxx"
     };
     private static final ItemStack FILLER = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     private final NBTGui plugin;
@@ -41,6 +42,25 @@ public class TypeInputGui {
             return false;
         });
 
+        ItemStack cancelItem = new ItemStack(Material.RED_DYE);
+        ItemMeta cancelMeta = cancelItem.getItemMeta();
+        assert cancelMeta != null;
+
+        cancelMeta.setDisplayName(ColorUtil.string("&c&lCancel"));
+
+        List<String> cancelLore = List.of(
+                ColorUtil.string("&7Click to exit this menu!")
+        );
+        cancelMeta.setLore(cancelLore);
+
+        cancelItem.setItemMeta(cancelMeta);
+
+        gui.addElement(new StaticGuiElement('c', cancelItem, (action) -> {
+            adderGui.getGui().show(adderGui.getPlayer());
+            Bukkit.getScheduler().runTaskLater(plugin, gui::destroy, 2);
+            return true;
+        }));
+
         gui.addElement(new StaticGuiElement('x', FILLER));
 
         GuiElementGroup group = new GuiElementGroup('t');
@@ -52,7 +72,6 @@ public class TypeInputGui {
             meta.setDisplayName(ColorUtil.string("&e&l" + clazz.getSimpleName()));
 
             List<String> lore = List.of(
-                    "",
                     ColorUtil.string("&7Click to select")
             );
             meta.setLore(lore);
@@ -61,7 +80,9 @@ public class TypeInputGui {
 
             group.addElement(new StaticGuiElement('i', item, (action) -> {
                 adderGui.setType(clazz);
+                adderGui.setProperty(null);
                 adderGui.getGui().show(adderGui.getPlayer());
+                Bukkit.getScheduler().runTaskLater(plugin, gui::destroy, 2);
                 return true;
             }));
         });

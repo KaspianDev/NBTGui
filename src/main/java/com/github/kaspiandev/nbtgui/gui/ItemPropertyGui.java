@@ -93,7 +93,20 @@ public class ItemPropertyGui {
             }
         }));
 
-        gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_DYE), (action) -> {
+        ItemStack addItem = new ItemStack(Material.LIME_DYE);
+        ItemMeta meta = addItem.getItemMeta();
+        assert meta != null;
+
+        meta.setDisplayName(ColorUtil.string("&a&lAdd"));
+
+        List<String> lore = List.of(
+                ColorUtil.string("&7Click to add a new property to this item!")
+        );
+        meta.setLore(lore);
+
+        addItem.setItemMeta(meta);
+
+        gui.addElement(new StaticGuiElement('a', addItem, (action) -> {
             new PropertyAdderGui(this).getGui().show(player);
             return true;
         }));
