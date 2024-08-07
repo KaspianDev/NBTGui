@@ -42,6 +42,11 @@ public class ItemPropertyGui {
     private InventoryGui buildGui() {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
+        gui.setCloseAction((action) -> {
+            gui.destroy();
+            return false;
+        });
+
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
         Collections.sort(properties);
 
