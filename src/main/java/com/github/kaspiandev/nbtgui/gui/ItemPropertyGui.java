@@ -26,18 +26,20 @@ public class ItemPropertyGui {
             "xeeeeeeex",
             "xxxpxnxxa"
     };
-    // TODO: Add buttons to create NBT properties
+
     private final NBTGui plugin;
     private final Player player;
-    private final InventoryGui gui;
+    private final ItemStack item;
+    private InventoryGui gui;
 
     public ItemPropertyGui(NBTGui plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this.gui = buildGui(player.getInventory().getItemInMainHand());
+        this.item = player.getInventory().getItemInMainHand();
+        this.gui = buildGui();
     }
 
-    private InventoryGui buildGui(ItemStack item) {
+    private InventoryGui buildGui() {
         InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
 
         List<NBTProperty<?>> properties = new ItemNBTParser().parse(item);
@@ -110,6 +112,14 @@ public class ItemPropertyGui {
 
     public InventoryGui getGui() {
         return gui;
+    }
+
+    public ItemStack getItem() {
+        return item;
+    }
+
+    public void rebuild() {
+        gui = buildGui();
     }
 
     public Player getPlayer() {

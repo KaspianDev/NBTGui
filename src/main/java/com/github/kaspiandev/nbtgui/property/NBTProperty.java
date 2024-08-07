@@ -44,9 +44,9 @@ public abstract class NBTProperty<T> implements Comparable<NBTProperty<?>> {
                    .toList();
     }
 
-    protected abstract PrettyValue<T, ?> getPrettyValue();
+    public abstract PrettyValue<T, ?> getPrettyValue();
 
-    protected abstract NBTType getNBTType();
+    public abstract NBTType getNBTType();
 
     protected abstract ItemStack getDisplayItem();
 

@@ -21,7 +21,7 @@ public class IntegerNBTProperty extends NBTProperty<Integer> {
     }
 
     @Override
-    protected NBTType getNBTType() {
+    public NBTType getNBTType() {
         return NBTType.NBTTagInt;
     }
 

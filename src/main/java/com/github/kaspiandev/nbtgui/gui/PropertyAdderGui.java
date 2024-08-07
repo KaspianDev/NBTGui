@@ -1,10 +1,12 @@
 package com.github.kaspiandev.nbtgui.gui;
 
 import com.github.kaspiandev.nbtgui.property.NBTProperty;
+import com.github.kaspiandev.nbtgui.property.registry.PropertyFactory;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
+import de.tr7zw.nbtapi.NBT;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PropertyAdderGui {
@@ -32,7 +35,6 @@ public class PropertyAdderGui {
     private final InventoryGui gui;
     private String name;
     private Class<?> type;
-    private Object value;
     private NBTProperty<?> property;
 
     public PropertyAdderGui(ItemPropertyGui itemPropertyGui) {
@@ -54,9 +56,14 @@ public class PropertyAdderGui {
             assert meta != null;
 
             meta.setDisplayName(ColorUtil.string("&6&lName"));
-            List<String> lore = List.of(
-                    ColorUtil.string("&7Click to change")
-            );
+
+            List<String> lore = new ArrayList<>();
+            if (name != null) {
+                lore.add(ColorUtil.string("&7Name: " + name));
+                lore.add("");
+            }
+            lore.add(ColorUtil.string("&7Click to change"));
+
             if (name == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -103,9 +110,13 @@ public class PropertyAdderGui {
             assert meta != null;
 
             meta.setDisplayName(ColorUtil.string("&6&lType"));
-            List<String> lore = List.of(
-                    ColorUtil.string("&7Click to change")
-            );
+            List<String> lore = new ArrayList<>();
+            if (type != null) {
+                lore.add(ColorUtil.string("&7Type: " + type.getSimpleName()));
+                lore.add("");
+            }
+            lore.add(ColorUtil.string("&7Click to change"));
+
             if (type == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -120,27 +131,76 @@ public class PropertyAdderGui {
             return new StaticGuiElement('t', typeItem, (action) -> {
                 new TypeInputGui(itemPropertyGui.getPlugin(), this).getGui().show(itemPropertyGui.getPlayer());
                 return true;
-            }); // TODO: Open type input list gui
+            });
         }));
 
         gui.addElement(new DynamicGuiElement('v', () -> {
-            ItemStack valueItem = new ItemStack(Material.OAK_SIGN);
-            ItemMeta meta = valueItem.getItemMeta();
-            assert meta != null;
+            if (name == null || type == null) {
+                ItemStack valueBlockedItem = new ItemStack(Material.BARRIER);
+                ItemMeta meta = valueBlockedItem.getItemMeta();
+                assert meta != null;
 
-            meta.setDisplayName(ColorUtil.string("&6&lValue"));
-            List<String> lore = List.of(
-                    ColorUtil.string("&7Click to change")
-            );
-            if (value == null) {
-                meta.addEnchant(Enchantment.DURABILITY, 1, false);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.setDisplayName(ColorUtil.string("&c&lValue"));
+                List<String> lore = List.of(
+                        ColorUtil.string("&7Name and type must be set!")
+                );
+                meta.setLore(lore);
+
+                valueBlockedItem.setItemMeta(meta);
+
+                return new StaticGuiElement('v', valueBlockedItem);
+            } else {
+                ItemStack valueItem = new ItemStack(Material.OAK_SIGN);
+                ItemMeta meta = valueItem.getItemMeta();
+                assert meta != null;
+
+                meta.setDisplayName(ColorUtil.string("&6&lValue"));
+                List<String> lore = new ArrayList<>();
+                if (property == null || property.getValue() == null) {
+                    meta.addEnchant(Enchantment.DURABILITY, 1, false);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                } else {
+                    property.getPrettyValue().appendTo(lore);
+                    lore.add("");
+                }
+                lore.add("&7Click to change");
+
+                meta.setLore(lore.stream()
+                                 .map(ColorUtil::string)
+                                 .toList());
+
+                valueItem.setItemMeta(meta);
+
+                return new StaticGuiElement('v', valueItem, (action) -> {
+                    StringPrompt namePrompt = new StringPrompt() {
+                        @NotNull
+                        @Override
+                        public String getPromptText(@NotNull ConversationContext conversationContext) {
+                            return ColorUtil.string("&6NBTGui &7» &aEnter new property value! (send 'cancel' to cancel)");
+                        }
+
+                        @Nullable
+                        @Override
+                        public Prompt acceptInput(@NotNull ConversationContext conversationContext, @Nullable String input) {
+                            if (input != null && !input.equals("cancel")) {
+                                PropertyFactory.build(name, type, input).ifPresent((newProperty) -> property = newProperty);
+                                redraw();
+                                gui.show(itemPropertyGui.getPlayer());
+                            }
+                            return Prompt.END_OF_CONVERSATION;
+                        }
+                    };
+
+                    gui.close(itemPropertyGui.getPlayer());
+                    new ConversationFactory(itemPropertyGui.getPlugin())
+                            .withFirstPrompt(namePrompt)
+                            .withTimeout(60)
+                            .withLocalEcho(false)
+                            .buildConversation(itemPropertyGui.getPlayer())
+                            .begin();
+                    return true;
+                });
             }
-            meta.setLore(lore);
-
-            valueItem.setItemMeta(meta);
-
-            return new StaticGuiElement('v', valueItem); // TODO: Open value input gui
         }));
 
         // TODO: Add property preview
@@ -152,7 +212,6 @@ public class PropertyAdderGui {
 
                 meta.setDisplayName(ColorUtil.string("&c&lNo Preview"));
                 List<String> lore = List.of(
-                        "",
                         ColorUtil.string("&7Name, type and value must be set!")
                 );
                 meta.setLore(lore);
@@ -163,6 +222,16 @@ public class PropertyAdderGui {
             } else {
                 return property.bakeElement('p');
             }
+        }));
+
+        gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_DYE), (action) -> {
+            gui.close(itemPropertyGui.getPlayer());
+            if (property != null) {
+                NBT.modify(itemPropertyGui.getItem(), property::writeTo);
+            }
+            itemPropertyGui.rebuild();
+            itemPropertyGui.getGui().show(itemPropertyGui.getPlayer());
+            return true;
         }));
 
         gui.addElement(new StaticGuiElement('x', FILLER));
@@ -196,14 +265,6 @@ public class PropertyAdderGui {
 
     public void setType(Class<?> type) {
         this.type = type;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
     }
 
 }
