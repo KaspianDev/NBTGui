@@ -28,6 +28,11 @@ public abstract class NBTProperty<T> implements Comparable<NBTProperty<?>> {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
+    public Class<? extends T> getClassType() {
+        return (Class<? extends T>) value.getClass();
+    }
+
     protected List<String> bakeLore() {
         List<String> lore = new ArrayList<>();
         lore.add("&7Name: " + name);

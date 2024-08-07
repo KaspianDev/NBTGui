@@ -1,5 +1,6 @@
 package com.github.kaspiandev.nbtgui.gui;
 
+import com.github.kaspiandev.nbtgui.property.NBTProperty;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.InventoryGui;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PropertyAdderGui {
@@ -25,14 +25,15 @@ public class PropertyAdderGui {
     private static final ItemStack FILLER = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     private static final String[] MASK = new String[]{
             "xxxxxxxxx",
-            "x ntv a x",
-            "xxxxxxxxx"
+            "x ntv p x",
+            "xxxxxxxxa"
     };
     private final ItemPropertyGui itemPropertyGui;
     private final InventoryGui gui;
     private String name;
     private Class<?> type;
     private Object value;
+    private NBTProperty<?> property;
 
     public PropertyAdderGui(ItemPropertyGui itemPropertyGui) {
         this.itemPropertyGui = itemPropertyGui;
@@ -53,19 +54,15 @@ public class PropertyAdderGui {
             assert meta != null;
 
             meta.setDisplayName(ColorUtil.string("&6&lName"));
-            List<String> lore = new ArrayList<>();
+            List<String> lore = List.of(
+                    ColorUtil.string("&7Click to change")
+            );
             if (name == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            } else {
-                lore.add("&7Current name: " + name);
-                lore.add("");
             }
 
-            lore.add("&7Click to change");
-            meta.setLore(lore.stream()
-                             .map(ColorUtil::string)
-                             .toList());
+            meta.setLore(lore);
 
             nameItem.setItemMeta(meta);
 
@@ -106,16 +103,14 @@ public class PropertyAdderGui {
             assert meta != null;
 
             meta.setDisplayName(ColorUtil.string("&6&lType"));
-            List<String> lore = new ArrayList<>();
+            List<String> lore = List.of(
+                    ColorUtil.string("&7Click to change")
+            );
             if (type == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            } else {
-                lore.add("&7Current Type: " + type.getSimpleName());
-                lore.add("");
             }
 
-            lore.add("&7Click to change");
             meta.setLore(lore.stream()
                              .map(ColorUtil::string)
                              .toList());
@@ -134,19 +129,14 @@ public class PropertyAdderGui {
             assert meta != null;
 
             meta.setDisplayName(ColorUtil.string("&6&lValue"));
-            List<String> lore = new ArrayList<>();
-            if (type == null) {
+            List<String> lore = List.of(
+                    ColorUtil.string("&7Click to change")
+            );
+            if (value == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            } else {
-                lore.add("&7Current Value: " + value);
-                lore.add("");
             }
-
-            lore.add("&7Click to change");
-            meta.setLore(lore.stream()
-                             .map(ColorUtil::string)
-                             .toList());
+            meta.setLore(lore);
 
             valueItem.setItemMeta(meta);
 
@@ -154,6 +144,26 @@ public class PropertyAdderGui {
         }));
 
         // TODO: Add property preview
+        gui.addElement(new DynamicGuiElement('p', () -> {
+            if (property == null) {
+                ItemStack noPreviewItem = new ItemStack(Material.BARRIER);
+                ItemMeta meta = noPreviewItem.getItemMeta();
+                assert meta != null;
+
+                meta.setDisplayName(ColorUtil.string("&c&lNo Preview"));
+                List<String> lore = List.of(
+                        "",
+                        ColorUtil.string("&7Name, type and value must be set!")
+                );
+                meta.setLore(lore);
+
+                noPreviewItem.setItemMeta(meta);
+
+                return new StaticGuiElement('p', noPreviewItem);
+            } else {
+                return property.bakeElement('p');
+            }
+        }));
 
         gui.addElement(new StaticGuiElement('x', FILLER));
 
