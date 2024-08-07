@@ -1,55 +1,51 @@
 package com.github.kaspiandev.nbtgui.gui;
 
-import com.github.kaspiandev.nbtgui.NBTGui;
 import com.github.kaspiandev.nbtgui.util.ColorUtil;
 import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
 import org.bukkit.Material;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PropertyAdderGui {
 
-    private static final Map<UUID, PropertyAdderGui> GUI_CACHE = new HashMap<>();
     private static final ItemStack FILLER = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     private static final String[] MASK = new String[]{
             "xxxxxxxxx",
             "x ntv a x",
             "xxxxxxxxx"
     };
-    private final NBTGui plugin;
-    private final Player player;
+    private final ItemPropertyGui itemPropertyGui;
     private final InventoryGui gui;
     private String name;
     private Class<?> type;
     private Object value;
 
-    public PropertyAdderGui(NBTGui plugin, Player player) {
-        this.plugin = plugin;
-        this.player = player;
+    public PropertyAdderGui(ItemPropertyGui itemPropertyGui) {
+        this.itemPropertyGui = itemPropertyGui;
         this.gui = buildGui();
     }
 
-    private static void cacheGui(Player player, PropertyAdderGui gui) {
-        GUI_CACHE.put(player.getUniqueId(), gui);
-    }
-
-    public static PropertyAdderGui getCachedOrBuild(NBTGui plugin, Player player) {
-        return GUI_CACHE.computeIfAbsent(player.getUniqueId(), (uuid) -> new PropertyAdderGui(plugin, player));
-    }
-
-    public static void destroy(Player player) {
-        GUI_CACHE.remove(player.getUniqueId());
-    }
-
     private InventoryGui buildGui() {
-        InventoryGui gui = new InventoryGui(plugin, ColorUtil.string("&8&lItem Properties"), MASK);
+        InventoryGui gui = new InventoryGui(itemPropertyGui.getPlugin(), ColorUtil.string("&8&lItem Properties"), MASK);
+
+        gui.setCloseAction((action) -> {
+            itemPropertyGui.getGui().show(itemPropertyGui.getPlayer());
+            return false;
+        });
 
         gui.addElement(new DynamicGuiElement('n', () -> {
             ItemStack nameItem = new ItemStack(Material.NAME_TAG);
@@ -73,7 +69,35 @@ public class PropertyAdderGui {
 
             nameItem.setItemMeta(meta);
 
-            return new StaticGuiElement('n', nameItem); // TODO: Open name input
+            return new StaticGuiElement('n', nameItem, (action) -> {
+                StringPrompt namePrompt = new StringPrompt() {
+                    @NotNull
+                    @Override
+                    public String getPromptText(@NotNull ConversationContext conversationContext) {
+                        return ColorUtil.string("&6NBTGui &7» &aEnter new property name! (send 'cancel' to cancel)");
+                    }
+
+                    @Nullable
+                    @Override
+                    public Prompt acceptInput(@NotNull ConversationContext conversationContext, @Nullable String input) {
+                        if (input != null && !input.equals("cancel")) {
+                            setName(input);
+                            redraw();
+                            gui.show(itemPropertyGui.getPlayer());
+                        }
+                        return Prompt.END_OF_CONVERSATION;
+                    }
+                };
+
+                gui.close(itemPropertyGui.getPlayer());
+                new ConversationFactory(itemPropertyGui.getPlugin())
+                        .withFirstPrompt(namePrompt)
+                        .withTimeout(60)
+                        .withLocalEcho(false)
+                        .buildConversation(itemPropertyGui.getPlayer())
+                        .begin();
+                return true;
+            });
         }));
 
         gui.addElement(new DynamicGuiElement('t', () -> {
@@ -99,7 +123,7 @@ public class PropertyAdderGui {
             typeItem.setItemMeta(meta);
 
             return new StaticGuiElement('t', typeItem, (action) -> {
-                new TypeInputGui(plugin, this).open();
+                new TypeInputGui(itemPropertyGui.getPlugin(), this).getGui().show(itemPropertyGui.getPlayer());
                 return true;
             }); // TODO: Open type input list gui
         }));
@@ -109,7 +133,7 @@ public class PropertyAdderGui {
             ItemMeta meta = valueItem.getItemMeta();
             assert meta != null;
 
-            meta.setDisplayName(ColorUtil.string("&6&lType"));
+            meta.setDisplayName(ColorUtil.string("&6&lValue"));
             List<String> lore = new ArrayList<>();
             if (type == null) {
                 meta.addEnchant(Enchantment.DURABILITY, 1, false);
@@ -129,21 +153,19 @@ public class PropertyAdderGui {
             return new StaticGuiElement('v', valueItem); // TODO: Open value input gui
         }));
 
+        // TODO: Add property preview
+
         gui.addElement(new StaticGuiElement('x', FILLER));
 
         return gui;
     }
 
     void redraw() {
-        gui.draw(player, true, false);
-    }
-
-    public void open() {
-        gui.show(player);
+        gui.draw(itemPropertyGui.getPlayer(), true, false);
     }
 
     public Player getPlayer() {
-        return player;
+        return itemPropertyGui.getPlayer();
     }
 
     public InventoryGui getGui() {

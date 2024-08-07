@@ -37,8 +37,8 @@ public class TypeInputGui {
                 MASK);
 
         gui.setCloseAction((action) -> {
-            adderGui.open();
-            return true;
+            adderGui.getGui().show(adderGui.getPlayer());
+            return false;
         });
 
         gui.addElement(new StaticGuiElement('x', FILLER));
@@ -61,7 +61,7 @@ public class TypeInputGui {
 
             group.addElement(new StaticGuiElement('i', item, (action) -> {
                 adderGui.setType(clazz);
-                adderGui.open();
+                adderGui.getGui().show(adderGui.getPlayer());
                 return true;
             }));
         });
@@ -71,8 +71,8 @@ public class TypeInputGui {
         return gui;
     }
 
-    public void open() {
-        gui.show(adderGui.getPlayer());
+    public InventoryGui getGui() {
+        return gui;
     }
 
 }

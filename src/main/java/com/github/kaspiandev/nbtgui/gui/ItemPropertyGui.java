@@ -29,10 +29,12 @@ public class ItemPropertyGui {
     // TODO: Add buttons to create NBT properties
     private final NBTGui plugin;
     private final Player player;
+    private final InventoryGui gui;
 
     public ItemPropertyGui(NBTGui plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.gui = buildGui(player.getInventory().getItemInMainHand());
     }
 
     private InventoryGui buildGui(ItemStack item) {
@@ -90,7 +92,7 @@ public class ItemPropertyGui {
         }));
 
         gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_DYE), (action) -> {
-            new PropertyAdderGui(plugin, player).open();
+            new PropertyAdderGui(this).getGui().show(player);
             return true;
         }));
 
@@ -106,9 +108,16 @@ public class ItemPropertyGui {
         return gui;
     }
 
-    public void open(ItemStack item) {
-        // TODO: Send message if no props
-        buildGui(item).show(player);
+    public InventoryGui getGui() {
+        return gui;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public NBTGui getPlugin() {
+        return plugin;
     }
 
 }
