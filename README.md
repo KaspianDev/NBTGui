@@ -1,5 +1,7 @@
 # NBTGui
 
+![](assets/nbtgui.png)
+
 NBTGui is a minecraft plugin that allows developers
 and server owners to view and manage nbt properties easily,
 directly in the game.
